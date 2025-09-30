@@ -1,14 +1,17 @@
-import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { StatusBar } from 'expo-status-bar';
+import { Colors } from "@/constants/theme";
+import { Slot } from "expo-router";
+import React from "react";
+import { Text, View } from "react-native"
 
-export default class _layout extends Component {
-  render() {
-    return (
-      <View>
-        <Text> _layout </Text>
-      </View>
-    )
-  }
+const RootLayout = () => {
+  return (
+    <View style = {{backgroundColor:Colors.background, flex:1}}>
+      <Text>Header</Text>
+      <Slot />
+      <StatusBar style = "light"></StatusBar>
+    </View>
+  )
 }
 
-const styles = StyleSheet.create({})
+export default RootLayout
