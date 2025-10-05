@@ -1,11 +1,11 @@
 import { Background } from "@react-navigation/elements";
 
+// constants/theme.ts
 export const Colors = {
-  darkGray:"#2D2D2D",
-  LigthGray: "#9B9B9B",
-  orange: "#ff9427",
-
-  textPrimary:"white",
-  textSecondary:"#666666",
-  background: "#000000"
-}
+  background: "#000000",
+  buttonDark: "#1C1C1C",
+  buttonLight: "#D4D4D2",
+  buttonOrange: "#FF9500",
+  textLight: "#FFFFFF",
+  textDark: "#000000",
+};
