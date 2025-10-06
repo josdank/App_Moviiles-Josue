@@ -1,0 +1,110 @@
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { CVData, PersonalInfo, Experience, Education } from "../types/cv.types";
+
+interface CVContextType {
+  cvData: CVData;
+  updatePersonalInfo: (info: PersonalInfo) => void;
+  addExperience: (exp: Experience) => void;
+  updateExperience: (id: string, exp: Experience) => void;
+  deleteExperience: (id: string) => void;
+  addEducation: (edu: Education) => void;
+  updateEducation: (id: string, edu: Education) => void;
+  deleteEducation: (id: string) => void;
+  setEditingExperience: (exp: Experience | null) => void; // ✅ nueva función
+}
+
+const CVContext = createContext<CVContextType | undefined>(undefined);
+
+export const CVProvider = ({ children }: { children: ReactNode }) => {
+  const [cvData, setCVData] = useState<CVData>({
+    personalInfo: {
+      fullName: "",
+      email: "",
+      phone: "",
+      location: "",
+      summary: "",
+    },
+    experiences: [],
+    education: [],
+    editingExperience: null, // ✅ nuevo campo
+  });
+
+  const updatePersonalInfo = (info: PersonalInfo) => {
+    setCVData((prev) => ({ ...prev, personalInfo: info }));
+  };
+
+  const addExperience = (exp: Experience) => {
+    setCVData((prev) => ({
+      ...prev,
+      experiences: [...prev.experiences, exp],
+    }));
+  };
+
+  const updateExperience = (id: string, exp: Experience) => {
+    setCVData((prev) => ({
+      ...prev,
+      experiences: prev.experiences.map((e) => (e.id === id ? exp : e)),
+    }));
+  };
+
+  const deleteExperience = (id: string) => {
+    setCVData((prev) => ({
+      ...prev,
+      experiences: prev.experiences.filter((e) => e.id !== id),
+    }));
+  };
+
+  const addEducation = (edu: Education) => {
+    setCVData((prev) => ({
+      ...prev,
+      education: [...prev.education, edu],
+    }));
+  };
+
+  const updateEducation = (id: string, edu: Education) => {
+    setCVData((prev) => ({
+      ...prev,
+      education: prev.education.map((e) => (e.id === id ? edu : e)),
+    }));
+  };
+
+  const deleteEducation = (id: string) => {
+    setCVData((prev) => ({
+      ...prev,
+      education: prev.education.filter((e) => e.id !== id),
+    }));
+  };
+
+  const setEditingExperience = (exp: Experience | null) => {
+    setCVData((prev) => ({
+      ...prev,
+      editingExperience: exp,
+    }));
+  };
+
+  return (
+    <CVContext.Provider
+      value={{
+        cvData,
+        updatePersonalInfo,
+        addExperience,
+        updateExperience,
+        deleteExperience,
+        addEducation,
+        updateEducation,
+        deleteEducation,
+        setEditingExperience, // ✅ incluir en el contexto
+      }}
+    >
+      {children}
+    </CVContext.Provider>
+  );
+};
+
+export const useCVContext = () => {
+  const context = useContext(CVContext);
+  if (!context) {
+    throw new Error("useCVContext debe usarse dentro de CVProvider");
+  }
+  return context;
+};
