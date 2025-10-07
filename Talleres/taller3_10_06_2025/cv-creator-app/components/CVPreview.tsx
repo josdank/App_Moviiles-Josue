@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CVData } from "../types/cv.types";
@@ -45,6 +46,13 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
       <View style={styles.content}>
         {/* Header con información personal */}
         <View style={styles.header}>
+          {/* Foto de perfil */}
+          {personalInfo.profileImage && (
+            <Image
+              source={{ uri: personalInfo.profileImage }}
+              style={styles.profileImage}
+            />
+          )}
           <Text style={styles.name}>
             {personalInfo.fullName || "Tu Nombre"}
           </Text>
@@ -75,11 +83,23 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
             <Text style={styles.sectionTitle}>EXPERIENCIA LABORAL</Text>
             {experiences.map((exp) => (
               <View key={exp.id} style={styles.item}>
-                <Text style={styles.itemTitle}>{exp.position}</Text>
-                <Text style={styles.itemSubtitle}>{exp.company}</Text>
-                <Text style={styles.itemDate}>
-                  {exp.startDate} - {exp.endDate || "Actual"}
-                </Text>
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemTextContainer}>
+                    <Text style={styles.itemTitle}>{exp.position}</Text>
+                    <Text style={styles.itemSubtitle}>{exp.company}</Text>
+                    <Text style={styles.itemDate}>
+                      {exp.startDate} - {exp.endDate || "Actual"}
+                    </Text>
+                  </View>
+                  {onDeleteExperience && (
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteExperience(exp.id)}
+                    >
+                      <Text style={styles.deleteButtonText}>✕</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
                 {exp.description && (
                   <Text style={styles.itemDescription}>{exp.description}</Text>
                 )}
@@ -132,96 +152,116 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#3498db",
-    paddingBottom: 16,
-    marginBottom: 24,
+    alignItems: "center",
+    marginBottom: 30,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 15,
+    borderWidth: 2,
+    borderColor: "#f0f0f0",
   },
   name: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 12,
+    color: "#333",
+    marginBottom: 10,
+    textAlign: "center",
   },
   contactInfo: {
-    gap: 4,
+    alignItems: "center",
   },
   contactText: {
     fontSize: 14,
-    color: "#7f8c8d",
+    color: "#666",
     marginBottom: 4,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 25,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#3498db",
-    marginBottom: 12,
+    color: "#2c3e50",
+    marginBottom: 15,
+    textTransform: "uppercase",
     letterSpacing: 1,
   },
   summaryText: {
     fontSize: 14,
-    color: "#34495e",
     lineHeight: 20,
+    color: "#555",
+    textAlign: "justify",
   },
   item: {
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ecf0f1",
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#3498db",
+  },
+  itemHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  itemTextContainer: {
+    flex: 1,
   },
   itemTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     color: "#2c3e50",
     marginBottom: 4,
   },
   itemSubtitle: {
     fontSize: 14,
-    color: "#7f8c8d",
+    color: "#34495e",
     marginBottom: 4,
+    fontWeight: "500",
   },
   itemInstitution: {
     fontSize: 14,
-    color: "#95a5a6",
+    color: "#34495e",
     marginBottom: 4,
+    fontStyle: "italic",
   },
   itemDate: {
     fontSize: 12,
-    color: "#95a5a6",
-    fontStyle: "italic",
+    color: "#7f8c8d",
     marginBottom: 8,
   },
   itemDescription: {
     fontSize: 13,
-    color: "#34495e",
     lineHeight: 18,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 12,
+    color: "#555",
     marginTop: 8,
   },
-  editButton: {
-    color: "#2980b9",
-    fontSize: 14,
-  },
   deleteButton: {
-    color: "#c0392b",
-    fontSize: 14,
+    padding: 8,
+    backgroundColor: "#e74c3c",
+    borderRadius: 6,
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
   },
   emptyState: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 60,
+    justifyContent: "center",
+    padding: 40,
   },
   emptyText: {
     fontSize: 16,
-    color: "#95a5a6",
+    color: "#7f8c8d",
     textAlign: "center",
     lineHeight: 24,
   },
