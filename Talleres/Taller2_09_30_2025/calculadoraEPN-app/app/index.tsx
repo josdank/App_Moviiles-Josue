@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 import { Colors } from "../constants/theme";
-
+import * as Haptics from "expo-haptics";
+ 
 export default function CalculatorScreen() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
+  
+  const handlePress = async (value:string) => {
+    const numberButtons = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
+    const operaButtons = ["+", "-", "x", "÷"];
+    const actionButtons = ["C", "del", "+/-"]
 
-  const handlePress = (value: string) => {
+    //Vibraciones 
+    if (numberButtons.includes(value)){
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } else if (operaButtons.includes(value)){
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } else if (actionButtons.includes(value)){
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+    }
+
     if (value === "C") {
       setInput("");
       setResult("");
@@ -19,12 +33,15 @@ export default function CalculatorScreen() {
         if (!isFinite(evalResult)) {
           setResult("Error");
           setInput("");
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         } else {
           setResult(evalResult.toString());
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
         }
       } catch {
         setResult("Error");
         setInput("");
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       }
     } else if (value === "+/-") {
       if (input) {

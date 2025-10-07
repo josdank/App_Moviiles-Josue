@@ -13,10 +13,10 @@ export interface FABProps
   extends Omit<PressableProps, "onPress" | "children" | "style"> {
   digit: Digit; // dígito que emite
   onKey: (digit: Digit) => void; // callback
-  label?: string; // por si quieres mostrar algo distinto
-  size?: number; // diámetro (circular) o alto (extendido)
-  extended?: boolean; // para el "0" ancho doble
-  bg?: string; // color de fondo (default pensado para fondo negro)
+  label?: string; 
+  size?: number; 
+  extended?: boolean; 
+  bg?: string; // color de fondo 
   color?: string; // color de texto
   style?: ViewStyle;
 }
