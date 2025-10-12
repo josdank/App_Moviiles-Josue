@@ -146,7 +146,6 @@ export const CVPreview: React.FC<CVPreviewProps> = ({
             ))}
           </View>
         )}
-
         {/* Mensaje si no hay datos */}
         {!personalInfo.fullName &&
           experiences.length === 0 &&
