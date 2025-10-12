@@ -24,9 +24,17 @@ export interface Education {
     graduationYear: string;
 }
 
+export interface Habilidad{
+    id:string,
+    nombre: string,
+    nivel: 'Básico' | 'Intermedio' | 'Avanzado' | 'Experto'; 
+    
+}
+
 export interface CVData {
   personalInfo: PersonalInfo;
   experiences: Experience[];
   education: Education[];
+  habilidades: Habilidad[];
   editingExperience: Experience | null;
 }

@@ -21,6 +21,7 @@ export default function HomeScreen() {
   const hasExperience = cvData.experiences.length > 0;
   const hasEducation = cvData.education.length > 0;
   const hasPhoto = !!cvData.personalInfo.profileImage;
+  const hasSkills = cvData.habilidades.length > 0;
 
   return (
     <ScrollView
@@ -97,6 +98,20 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => router.push("/education")}
+        >
+          <Text style={styles.buttonText}>Agregar</Text>
+        </TouchableOpacity>
+      </View>
+            <View style={styles.section}>
+        <Text style={styles.sectionTitle}>4. Habilidades</Text>
+        <Text style={styles.status}>
+          {hasSkills
+            ? `✓ ${cvData.habilidades.length} agregada(s)`
+            : "Pendiente"}
+        </Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/skill")}
         >
           <Text style={styles.buttonText}>Agregar</Text>
         </TouchableOpacity>

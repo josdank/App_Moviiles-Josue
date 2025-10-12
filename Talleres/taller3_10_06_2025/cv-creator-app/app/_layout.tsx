@@ -33,6 +33,12 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="habilidad"
+          options={{
+            title: "Habilidades",
+          }}
+        />
+        <Stack.Screen
           name="experience"
           options={{
             title: "Experiencia Laboral",

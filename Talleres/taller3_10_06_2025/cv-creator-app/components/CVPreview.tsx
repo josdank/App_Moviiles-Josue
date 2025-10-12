@@ -15,30 +15,46 @@ import { CVData } from "../types/cv.types";
 
 interface CVPreviewProps {
   cvData: CVData;
-  onDeleteExperience?: (id: string) => void; // función opcional para eliminar
+  onDeleteExperience?: (id: string) => void;
+  onDeleteSkill?: (id: string) => void; // ✅ función opcional para eliminar habilidades
 }
 
-export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience }) => {
-  const { personalInfo, experiences, education } = cvData;
+export const CVPreview: React.FC<CVPreviewProps> = ({
+  cvData,
+  onDeleteExperience,
+  onDeleteSkill,
+}) => {
+  const { personalInfo, experiences, education, habilidades } = cvData;
   const navigation = useNavigation();
 
   const handleDeleteExperience = (id: string) => {
-    Alert.alert(
-      "Eliminar experiencia",
-      "¿Estás seguro de que deseas eliminar esta experiencia?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          style: "destructive",
-          onPress: () => {
-            if (onDeleteExperience) {
-              onDeleteExperience(id);
-            }
-          },
+    Alert.alert("Eliminar experiencia", "¿Estás seguro de que deseas eliminar esta experiencia?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Eliminar",
+        style: "destructive",
+        onPress: () => {
+          if (onDeleteExperience) {
+            onDeleteExperience(id);
+          }
         },
-      ]
-    );
+      },
+    ]);
+  };
+
+  const handleDeleteSkill = (id: string) => {
+    Alert.alert("Eliminar habilidad", "¿Deseas eliminar esta habilidad?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Eliminar",
+        style: "destructive",
+        onPress: () => {
+          if (onDeleteSkill) {
+            onDeleteSkill(id);
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -46,23 +62,13 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
       <View style={styles.content}>
         {/* Header con información personal */}
         <View style={styles.header}>
-          {/* Foto de perfil */}
           {personalInfo.profileImage && (
-            <Image
-              source={{ uri: personalInfo.profileImage }}
-              style={styles.profileImage}
-            />
+            <Image source={{ uri: personalInfo.profileImage }} style={styles.profileImage} />
           )}
-          <Text style={styles.name}>
-            {personalInfo.fullName || "Tu Nombre"}
-          </Text>
+          <Text style={styles.name}>{personalInfo.fullName || "Tu Nombre"}</Text>
           <View style={styles.contactInfo}>
-            {personalInfo.email && (
-              <Text style={styles.contactText}>📧 {personalInfo.email}</Text>
-            )}
-            {personalInfo.phone && (
-              <Text style={styles.contactText}>📱 {personalInfo.phone}</Text>
-            )}
+            {personalInfo.email && <Text style={styles.contactText}>📧 {personalInfo.email}</Text>}
+            {personalInfo.phone && <Text style={styles.contactText}>📱 {personalInfo.phone}</Text>}
             {personalInfo.location && (
               <Text style={styles.contactText}>📍 {personalInfo.location}</Text>
             )}
@@ -100,9 +106,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
                     </TouchableOpacity>
                   )}
                 </View>
-                {exp.description && (
-                  <Text style={styles.itemDescription}>{exp.description}</Text>
-                )}
+                {exp.description && <Text style={styles.itemDescription}>{exp.description}</Text>}
               </View>
             ))}
           </View>
@@ -115,12 +119,28 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
             {education.map((edu) => (
               <View key={edu.id} style={styles.item}>
                 <Text style={styles.itemTitle}>{edu.degree}</Text>
-                {edu.field && (
-                  <Text style={styles.itemSubtitle}>{edu.field}</Text>
-                )}
+                {edu.field && <Text style={styles.itemSubtitle}>{edu.field}</Text>}
                 <Text style={styles.itemInstitution}>{edu.institution}</Text>
-                {edu.graduationYear && (
-                  <Text style={styles.itemDate}>{edu.graduationYear}</Text>
+                {edu.graduationYear && <Text style={styles.itemDate}>{edu.graduationYear}</Text>}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* ✅ Habilidades */}
+        {habilidades.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>HABILIDADES</Text>
+            {habilidades.map((h) => (
+              <View key={h.id} style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>• {h.nombre} ({h.nivel})</Text>
+                {onDeleteSkill && (
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => handleDeleteSkill(h.id)}
+                  >
+                    <Text style={styles.deleteButtonText}>✕</Text>
+                  </TouchableOpacity>
                 )}
               </View>
             ))}
@@ -130,11 +150,11 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
         {/* Mensaje si no hay datos */}
         {!personalInfo.fullName &&
           experiences.length === 0 &&
-          education.length === 0 && (
+          education.length === 0 &&
+          habilidades.length === 0 && (
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>
-                No hay información para mostrar.{"\n"}
-                Completa las secciones para ver tu CV.
+                No hay información para mostrar.{"\n"}Completa las secciones para ver tu CV.
               </Text>
             </View>
           )}
@@ -143,6 +163,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cvData, onDeleteExperience
   );
 };
 
+// ✅ estilos se mantienen igual
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -209,7 +230,8 @@ const styles = StyleSheet.create({
   itemHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
+    marginBottom: 10,
   },
   itemTextContainer: {
     flex: 1,

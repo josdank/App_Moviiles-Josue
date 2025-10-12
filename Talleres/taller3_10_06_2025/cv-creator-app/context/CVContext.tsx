@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { CVData, PersonalInfo, Experience, Education } from "../types/cv.types";
+import { CVData, PersonalInfo, Experience, Education, Habilidad } from "../types/cv.types";
 
 interface CVContextType {
   cvData: CVData;
@@ -10,23 +10,20 @@ interface CVContextType {
   addEducation: (edu: Education) => void;
   updateEducation: (id: string, edu: Education) => void;
   deleteEducation: (id: string) => void;
-  setEditingExperience: (exp: Experience | null) => void; // ✅ nueva función
+  setEditingExperience: (exp: Experience | null) => void;
+  addSkill: (skill: Habilidad) => void;
+  deleteSkill: (id: string) => void; // ✅ agregado a la interfaz
 }
 
 const CVContext = createContext<CVContextType | undefined>(undefined);
 
 export const CVProvider = ({ children }: { children: ReactNode }) => {
   const [cvData, setCVData] = useState<CVData>({
-    personalInfo: {
-      fullName: "",
-      email: "",
-      phone: "",
-      location: "",
-      summary: "",
-    },
+    personalInfo: { fullName: '', email: '', phone: '', location: '', summary: '' },
     experiences: [],
     education: [],
-    editingExperience: null, // ✅ nuevo campo
+    habilidades: [],
+    editingExperience: null,
   });
 
   const updatePersonalInfo = (info: PersonalInfo) => {
@@ -82,6 +79,20 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const addSkill = (skill: Habilidad) => {
+    setCVData((prev) => ({
+      ...prev,
+      habilidades: [...(prev.habilidades || []), skill],
+    }));
+  };
+
+  const deleteSkill = (id: string) => {
+    setCVData((prev) => ({
+      ...prev,
+      habilidades: prev.habilidades.filter((h) => h.id !== id),
+    }));
+  };
+
   return (
     <CVContext.Provider
       value={{
@@ -93,7 +104,9 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
         addEducation,
         updateEducation,
         deleteEducation,
-        setEditingExperience, // ✅ incluir en el contexto
+        setEditingExperience,
+        addSkill,
+        deleteSkill, // ✅ incluido en el provider
       }}
     >
       {children}
