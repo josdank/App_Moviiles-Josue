@@ -41,6 +41,11 @@
           "photosPermission": "La app necesita acceso a tus fotos para seleccionar tu foto de perfil."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fd54c829-2082-40fa-a13d-ca36c29a3709"
+      }
+    }
   }
 }
