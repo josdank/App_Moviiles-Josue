@@ -249,5 +249,3 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
 });
-
-

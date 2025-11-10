@@ -268,4 +268,3 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
 });
-

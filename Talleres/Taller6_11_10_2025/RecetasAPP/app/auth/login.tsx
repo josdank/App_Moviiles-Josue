@@ -14,37 +14,25 @@ import { globalStyles } from "../../src/styles/globalStyles";
 import { colors, fontSize, spacing } from "../../src/styles/theme";
 
 export default function LoginScreen() {
-  // ESTADO LOCAL
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cargando, setCargando] = useState(false);
-
-  // HOOKS
   const { iniciarSesion } = useAuth();
   const router = useRouter();
 
-  /**
-   * Manejar inicio de sesión
-   */
   const handleLogin = async () => {
-    // VALIDACIÓN: Campos vacíos
     if (!email || !password) {
       Alert.alert("Error", "Por favor completa todos los campos");
       return;
     }
 
-    // INICIO DE SESIÓN
     setCargando(true);
     const resultado = await iniciarSesion(email, password);
     setCargando(false);
 
-    // MANEJO DE RESULTADO
     if (resultado.success) {
-      // Éxito: Redirigir a tabs
-      // replace() para que no pueda volver con botón atrás
       router.replace("/(tabs)");
     } else {
-      // Error: Mostrar mensaje
       Alert.alert("Error", resultado.error || "No se pudo iniciar sesión");
     }
   };
@@ -60,8 +48,8 @@ export default function LoginScreen() {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          autoCapitalize="none"        // No capitalizar
-          keyboardType="email-address" // Teclado de email
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
 
         <TextInput
@@ -69,7 +57,7 @@ export default function LoginScreen() {
           placeholder="Contraseña"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry // Ocultar texto
+          secureTextEntry
         />
 
         <TouchableOpacity
@@ -79,7 +67,7 @@ export default function LoginScreen() {
             styles.botonLogin,
           ]}
           onPress={handleLogin}
-          disabled={cargando} // Deshabilitar mientras carga
+          disabled={cargando}
         >
           {cargando ? (
             <ActivityIndicator color={colors.white} />
@@ -123,4 +111,3 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
   },
 });
-

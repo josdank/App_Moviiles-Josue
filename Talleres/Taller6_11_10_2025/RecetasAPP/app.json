@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "RecetasAPP",
-    "slug": "RecetasAPP",
+    "name": "RecetasApp",
+    "slug": "RecetasApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

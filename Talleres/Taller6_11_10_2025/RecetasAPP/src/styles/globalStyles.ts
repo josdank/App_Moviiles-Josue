@@ -1,13 +1,9 @@
 import { StyleSheet } from "react-native";
 import { borderRadius, colors, fontSize, shadows, spacing } from "./theme";
 
-/**
- * Estilos Globales Reutilizables
- * Componentes comunes usados en toda la aplicación
- */
-
+// Estilos que se usan en toda la app
 export const globalStyles = StyleSheet.create({
-  // CONTENEDORES
+  // Contenedores
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -18,37 +14,34 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.background,
-    padding: spacing.lg,
   },
 
   contentPadding: {
-    padding: spacing.md,
+    padding: spacing.lg,
   },
 
-  // INPUTS
+  // Inputs
   input: {
     backgroundColor: colors.white,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    fontSize: fontSize.md,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: fontSize.md,
     marginBottom: spacing.md,
-    color: colors.textPrimary,
   },
 
   inputMultiline: {
-    minHeight: 100,
+    height: 100,
     textAlignVertical: "top",
   },
 
-  // BOTONES
+  // Botones
   button: {
-    borderRadius: borderRadius.md,
     padding: spacing.md,
+    borderRadius: borderRadius.md,
     alignItems: "center",
     justifyContent: "center",
-    ...shadows.small,
   },
 
   buttonPrimary: {
@@ -66,16 +59,16 @@ export const globalStyles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
 
-  // TARJETAS
+  // Tarjetas
   card: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...shadows.medium,
+    ...shadows.small,
   },
 
   cardImage: {
@@ -84,18 +77,19 @@ export const globalStyles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
 
-  // TEXTOS
+  // Textos
   title: {
     fontSize: fontSize.xxl,
     fontWeight: "bold",
     color: colors.textPrimary,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
 
   subtitle: {
     fontSize: fontSize.lg,
     fontWeight: "600",
     color: colors.textPrimary,
+    marginTop: spacing.sm,
     marginBottom: spacing.sm,
   },
 
@@ -110,46 +104,46 @@ export const globalStyles = StyleSheet.create({
   },
 
   textTertiary: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     color: colors.textTertiary,
   },
 
-  // HEADER
+  // Headers
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: spacing.md,
+    padding: spacing.lg,
     backgroundColor: colors.white,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
 
-  // CHIPS (TAGS)
+  // Chips/Tags
   chip: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius.round,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    gap: spacing.xs,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs + 3,
+    borderRadius: borderRadius.xl,
+    gap: spacing.xs + 3,
   },
 
   chipText: {
-    fontSize: fontSize.sm,
     color: colors.primary,
-    fontWeight: "500",
+    fontSize: fontSize.sm,
   },
 
-  // ESTADOS
+  // Mensajes vacíos
   emptyState: {
     textAlign: "center",
-    color: colors.textSecondary,
+    marginTop: spacing.xxl + 10,
     fontSize: fontSize.md,
-    marginTop: spacing.xl,
+    color: colors.textTertiary,
   },
 
+  // Loading
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -157,4 +151,3 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: colors.background,
   },
 });
-

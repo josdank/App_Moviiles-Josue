@@ -22,33 +22,33 @@ export default function RegistroScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rolSeleccionado, setRolSeleccionado] = useState<"chef" | "usuario">(
-    "usuario" // Por defecto: usuario
+    "usuario"
   );
   const [cargando, setCargando] = useState(false);
   const { registrar } = useAuth();
   const router = useRouter();
 
   const handleRegistro = async () => {
-    // VALIDACIÓN 1: Campos vacíos
     if (!email || !password) {
       Alert.alert("Error", "Completa todos los campos");
       return;
     }
 
-    // VALIDACIÓN 2: Longitud de contraseña
     if (password.length < 6) {
       Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
-    // REGISTRO
     setCargando(true);
     const resultado = await registrar(email, password, rolSeleccionado);
     setCargando(false);
 
     if (resultado.success) {
-      // Éxito: Redirigir a login
-      Alert.alert("Éxito", "Cuenta creada correctamente", [
+      const mensaje = resultado.needsEmailConfirmation
+        ? "Cuenta creada. Por favor, revisa tu email para confirmar tu cuenta."
+        : "Cuenta creada correctamente";
+
+      Alert.alert("Éxito", mensaje, [
         { text: "OK", onPress: () => router.replace("/auth/login") },
       ]);
     } else {
@@ -78,10 +78,8 @@ export default function RegistroScreen() {
           secureTextEntry
         />
 
-        {/* SELECTOR DE ROL */}
         <Text style={styles.labelRol}>Selecciona tu rol:</Text>
         <View style={styles.contenedorRoles}>
-          {/* BOTÓN: Usuario */}
           <TouchableOpacity
             style={[
               styles.botonRol,
@@ -99,7 +97,6 @@ export default function RegistroScreen() {
             </Text>
           </TouchableOpacity>
 
-          {/* BOTÓN: Chef */}
           <TouchableOpacity
             style={[
               styles.botonRol,
@@ -178,4 +175,3 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
   },
 });
-

@@ -10,16 +10,15 @@ export default function RecipeLayout() {
       <Stack.Screen
         name="crear"
         options={{
-          presentation: "card", // Animación de tarjeta desde abajo
+          presentation: "card",
         }}
       />
       <Stack.Screen
         name="editar"
         options={{
-          presentation: "modal", // Aparece como modal
+          presentation: "modal",
         }}
       />
     </Stack>
   );
 }
-

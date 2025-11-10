@@ -4,7 +4,7 @@ export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false, // Sin header
+        headerShown: false,
       }}
     >
       <Stack.Screen name="login" />
@@ -12,4 +12,3 @@ export default function AuthLayout() {
     </Stack>
   );
 }
-

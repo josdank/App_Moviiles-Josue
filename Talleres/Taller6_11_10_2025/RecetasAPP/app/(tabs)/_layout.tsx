@@ -14,7 +14,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
-        tabBarButton: HapticTab, // Vibración al tocar tab
+        tabBarButton: HapticTab,
       }}
     >
       <Tabs.Screen
@@ -31,11 +31,10 @@ export default function TabLayout() {
         options={{
           title: "Nueva Receta",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={32} name="fork.knife" color={color} />
+            <IconSymbol size={50} name="fork.knife" color={color} />
           ),
         }}
       />
     </Tabs>
   );
 }
-
