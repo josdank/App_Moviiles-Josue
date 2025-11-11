@@ -1,4 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import { Buffer } from "buffer";
 import { supabase } from "../../../data/services/supabaseClient";
 import { Receta } from "../../models/Receta";
 
@@ -12,7 +14,23 @@ export class RecipesUseCase {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      // Normalizar imagen_url: si la columna guarda solo el path, generar publicUrl
+      const resultados: Receta[] = (data || []).map((r: any) => {
+        const imagen = r.imagen_url;
+        if (imagen && !imagen.startsWith("http")) {
+          try {
+            const { data: urlData } = supabase.storage
+              .from("recetas-fotos")
+              .getPublicUrl(imagen);
+            r.imagen_url = urlData.publicUrl;
+          } catch (e) {
+            console.log("No se pudo obtener publicUrl para:", imagen, e);
+          }
+        }
+        return r as Receta;
+      });
+
+      return resultados;
     } catch (error) {
       console.log("Error al obtener recetas:", error);
       return [];
@@ -65,6 +83,21 @@ export class RecipesUseCase {
         .single();
 
       if (error) throw error;
+
+      // Si la imagen fue subida pero la URL guardada no es una http(s), intentamos obtener publicUrl y actualizar la fila
+      try {
+        if (imagenUrl && !imagenUrl.startsWith("http") && data?.id) {
+          const urlResp = supabase.storage.from("recetas-fotos").getPublicUrl(imagenUrl);
+          const urlData = (urlResp as any).data;
+          const publicUrl = urlData?.publicUrl;
+          if (publicUrl) {
+            await supabase.from("recetas").update({ imagen_url: publicUrl }).eq("id", data.id);
+            data.imagen_url = publicUrl;
+          }
+        }
+      } catch (e) {
+        console.log("No se pudo actualizar la receta con publicUrl:", e);
+      }
       return { success: true, receta: data };
     } catch (error: any) {
       return { success: false, error: error.message };
@@ -76,16 +109,30 @@ export class RecipesUseCase {
     id: string,
     titulo: string,
     descripcion: string,
-    ingredientes: string[]
+    ingredientes: string[],
+    imagenUri?: string
   ) {
     try {
+      let imagenUrl: string | null = null;
+
+      // Si se pasó una nueva imagen, subirla primero
+      if (imagenUri) {
+        imagenUrl = await this.subirImagen(imagenUri);
+      }
+
+      const updatePayload: any = {
+        titulo,
+        descripcion,
+        ingredientes,
+      };
+
+      if (imagenUrl) {
+        updatePayload.imagen_url = imagenUrl;
+      }
+
       const { data, error } = await supabase
         .from("recetas")
-        .update({
-          titulo,
-          descripcion,
-          ingredientes,
-        })
+        .update(updatePayload)
         .eq("id", id)
         .select()
         .single();
@@ -116,25 +163,53 @@ export class RecipesUseCase {
       const extension = uri.split(".").pop();
       const nombreArchivo = `${Date.now()}.${extension}`;
 
-      // Convertir la imagen a blob
-      const response = await fetch(uri);
-      const blob = await response.blob();
+      // Intentar obtener un Blob (puede no estar disponible en algunos entornos RN)
+      let uploadBody: any = null;
+      let contentType = `image/${extension}`;
 
-      // Subir a Supabase Storage
+      try {
+        const response = await fetch(uri);
+        if (typeof (response as any).blob === "function") {
+          uploadBody = await (response as any).blob();
+        } else {
+          // blob no disponible: lanzar para entrar al fallback
+          throw new Error("blob_not_supported");
+        }
+      } catch (err) {
+        // Fallback: leer como base64 y convertir a Buffer
+        try {
+          const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+          uploadBody = Buffer.from(base64, "base64");
+          // contentType ya definido
+        } catch (fsErr) {
+          console.log("Error leyendo fichero para fallback base64:", fsErr);
+          throw fsErr;
+        }
+      }
+
+      // Subir a Supabase Storage (uploadBody puede ser Blob o Buffer)
       const { data, error } = await supabase.storage
         .from("recetas-fotos")
-        .upload(nombreArchivo, blob, {
-          contentType: `image/${extension}`,
+        .upload(nombreArchivo, uploadBody, {
+          contentType,
         });
 
       if (error) throw error;
 
-      // Obtener la URL pública
-      const { data: urlData } = supabase.storage
-        .from("recetas-fotos")
-        .getPublicUrl(nombreArchivo);
+      console.log("Imagen subida al storage:", data);
 
-      return urlData.publicUrl;
+      // Obtener la URL pública (si el bucket es público)
+      const urlResp = supabase.storage.from("recetas-fotos").getPublicUrl(nombreArchivo);
+      const urlData = (urlResp as any).data;
+
+      if (urlData && urlData.publicUrl) {
+        console.log("Public URL obtenida:", urlData.publicUrl);
+      } else {
+        console.log("No se obtuvo publicUrl, se devolverá el path:", nombreArchivo);
+      }
+
+      // Devolver el publicUrl si existe, si no, devolver el path (nombreArchivo)
+      return urlData?.publicUrl || nombreArchivo;
     } catch (error) {
       console.log("Error al subir imagen:", error);
       return null;
@@ -168,6 +243,35 @@ export class RecipesUseCase {
       return null;
     } catch (error) {
       console.log("Error al seleccionar imagen:", error);
+      return null;
+    }
+  }
+
+  // Tomar foto con la cámara
+  async tomarFoto(): Promise<string | null> {
+    try {
+      // Pedir permisos para la cámara
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+      if (status !== "granted") {
+        alert("Necesitamos permisos para acceder a la cámara");
+        return null;
+      }
+
+      const resultado = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!resultado.canceled) {
+        return resultado.assets[0].uri;
+      }
+
+      return null;
+    } catch (error) {
+      console.log("Error al tomar foto:", error);
       return null;
     }
   }

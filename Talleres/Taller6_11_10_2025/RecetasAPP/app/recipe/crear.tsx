@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Animated,
 } from "react-native";
 import { useAuth } from "../../src/presentation/hooks/useAuth";
 import { useRecipes } from "../../src/presentation/hooks/useRecipes";
@@ -23,7 +24,7 @@ import {
 
 export default function CrearRecetaScreen() {
   const { usuario, esChef } = useAuth();
-  const { crear, seleccionarImagen } = useRecipes();
+  const { crear, seleccionarImagen, tomarFoto } = useRecipes();
   const router = useRouter();
 
   const [titulo, setTitulo] = useState("");
@@ -40,6 +41,25 @@ export default function CrearRecetaScreen() {
     }
   };
 
+  // AnimatedButton: small scale feedback before navigation for non-chef users
+  const AnimatedButton: React.FC<{ onPress: () => void }> = ({ onPress }) => {
+    const localScale = useRef(new Animated.Value(1)).current;
+    const handlePress = () => {
+      Animated.sequence([
+        Animated.timing(localScale, { toValue: 0.96, duration: 100, useNativeDriver: true }),
+        Animated.timing(localScale, { toValue: 1, duration: 150, useNativeDriver: true }),
+      ]).start(() => onPress());
+    };
+
+    return (
+      <Animated.View style={{ transform: [{ scale: localScale }], marginTop: 16 }}>
+        <TouchableOpacity style={[globalStyles.button, globalStyles.buttonPrimary]} onPress={handlePress}>
+          <Text style={globalStyles.buttonText}>Volver al inicio</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
   const quitarIngrediente = (index: number) => {
     setIngredientes(ingredientes.filter((_, i) => i !== index));
   };
@@ -48,6 +68,15 @@ export default function CrearRecetaScreen() {
     const uri = await seleccionarImagen();
     if (uri) {
       setImagenUri(uri);
+    }
+  };
+
+  const handleTomarFoto = async () => {
+    if (tomarFoto) {
+      const uri = await tomarFoto();
+      if (uri) setImagenUri(uri);
+    } else {
+      alert("Función de cámara no disponible");
     }
   };
 
@@ -97,6 +126,8 @@ export default function CrearRecetaScreen() {
         <Text style={globalStyles.textSecondary}>
           Crea una cuenta de chef para poder publicar recetas
         </Text>
+        {/* Animated button: pequeño efecto antes de navegar */}
+        <AnimatedButton onPress={() => router.push("/(tabs)")} />
       </View>
     );
   }
@@ -166,6 +197,13 @@ export default function CrearRecetaScreen() {
           <Text style={globalStyles.buttonText}>
             {imagenUri ? "📷 Cambiar Foto" : "📷 Agregar Foto"}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[globalStyles.button, globalStyles.buttonSecondary, { marginTop: 8 }]}
+          onPress={handleTomarFoto}
+        >
+          <Text style={globalStyles.buttonText}>{imagenUri ? "📸 Re-tomar" : "📸 Tomar Foto"}</Text>
         </TouchableOpacity>
 
         {imagenUri && (
