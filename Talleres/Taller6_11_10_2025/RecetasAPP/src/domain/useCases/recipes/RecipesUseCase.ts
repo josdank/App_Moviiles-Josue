@@ -2,6 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
 import { supabase } from "../../../data/services/supabaseClient";
+import { uploadToCloudinary } from "../../../data/services/cloudinaryClient";
 import { Receta } from "../../models/Receta";
 
 export class RecipesUseCase {
@@ -159,6 +160,18 @@ export class RecipesUseCase {
   // Subir imagen a Supabase Storage
   private async subirImagen(uri: string): Promise<string | null> {
     try {
+      // Primero intentamos subir a Cloudinary (si está configurado en .env)
+      try {
+        const cloudUrl = await uploadToCloudinary(uri);
+        if (cloudUrl) {
+          console.log('Imagen subida a Cloudinary:', cloudUrl);
+          return cloudUrl;
+        }
+      } catch (cloudErr) {
+        console.log('Cloudinary upload failed, falling back to Supabase:', cloudErr);
+      }
+
+      // Si Cloudinary no está configurado o falla, usamos Supabase Storage (flujo original)
       // Obtener la extensión del archivo
       const extension = uri.split(".").pop();
       const nombreArchivo = `${Date.now()}.${extension}`;
