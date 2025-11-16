@@ -1,4 +1,5 @@
 import { supabase } from '../../shared/infra/supabase/client';
+import { Alert } from 'react-native';
 
 export async function signUp(
   email: string,
@@ -6,24 +7,29 @@ export async function signUp(
   fullName: string,
   role: 'entrenador' | 'usuario'
 ) {
-  // Paso 1: crear cuenta en Auth
-  const { data: authData, error } = await supabase.auth.signUp({ email, password });
+  const { data: authData, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: fullName, role }
+    }
+  });
   if (error) throw error;
 
-  const userId = authData.user?.id;
-  if (!userId) throw new Error('No se pudo obtener el ID del usuario');
+  // Si confirmación de correo está activada, no habrá sesión inmediata
+  if (!authData.session) {
+    Alert.alert(
+      'Registro exitoso',
+      'Cuenta creada. Revisa tu correo y confirma tu cuenta para poder ingresar.'
+    );
+  } else {
+    Alert.alert(
+      'Registro exitoso',
+      'Cuenta creada y confirmada. Ya puedes ingresar.'
+    );
+  }
 
-  // Paso 2: crear perfil asociado en la tabla profiles
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert({ id: userId, full_name: fullName, role });
-
-  if (profileError) throw profileError;
-
-  return {
-    ...authData,
-    message: 'Cuenta creada. Revisa tu correo electrónico para confirmar tu cuenta antes de ingresar.'
-  };
+  return authData;
 }
 
 export async function signIn(email: string, password: string) {
