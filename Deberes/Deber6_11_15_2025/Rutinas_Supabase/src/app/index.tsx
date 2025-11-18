@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { useSession } from '../src/presentation/stores/session';
+import { useSession } from '../presentation/stores/session';
 
 export default function Index() {
   const router = useRouter();

@@ -1,44 +1,32 @@
 import { supabase } from '../../shared/infra/supabase/client';
 
-export type ChatMessage = {
-  id: number;
-  plan_id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-};
-
-export async function sendMessage(planId: string, content: string) {
+export async function enviarMensaje(planId: string, content: string) {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('No user');
-  const { data, error } = await supabase
+  if (!user) throw new Error('No autenticado');
+
+  const { error } = await supabase
     .from('chat_messages')
-    .insert({ plan_id: planId, sender_id: user.id, content })
-    .select()
-    .single();
+    .insert({ plan_id: planId, sender_id: user.id, content });
   if (error) throw error;
-  return data as ChatMessage;
 }
 
-export function subscribeToPlanChat(planId: string, onMessage: (msg: ChatMessage) => void) {
-  const channel = supabase
+export function suscribirChat(planId: string, onMessage: (msg: any) => void) {
+  return supabase
     .channel(`chat:${planId}`)
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'chat_messages',
-      filter: `plan_id=eq.${planId}`
-    }, (payload) => onMessage(payload.new as ChatMessage))
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'chat_messages', filter: `plan_id=eq.${planId}` },
+      (payload) => onMessage(payload.new)
+    )
     .subscribe();
-  return () => supabase.removeChannel(channel);
 }
 
-export async function listChat(planId: string) {
+export async function listarMensajes(planId: string) {
   const { data, error } = await supabase
     .from('chat_messages')
     .select('*')
     .eq('plan_id', planId)
     .order('created_at', { ascending: true });
   if (error) throw error;
-  return data as ChatMessage[];
+  return data;
 }

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { View, Text, Alert, StyleSheet } from 'react-native';
 import { useRouter, Link } from 'expo-router';
-import { useSession } from '../../src/presentation/stores/session';
-import { signIn } from '../../src/data/repositories/AuthRepo';
-import { Input } from '../../src/presentation/components/Input';
-import { Button } from '../../src/presentation/components/Button';
-import { theme } from '../../src/shared/styles/theme';
+import { useSession } from '../../presentation/stores/session';
+import { signIn } from '../../data/repositories/AuthRepo';
+import { Input } from '../../presentation/components/Input';
+import { Button } from '../../presentation/components/Button';
+import { theme } from '../../shared/styles/theme';
 
 export default function Login() {
   const [email, setEmail] = useState('');

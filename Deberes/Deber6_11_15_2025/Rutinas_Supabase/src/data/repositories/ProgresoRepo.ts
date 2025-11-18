@@ -1,16 +1,13 @@
 import { supabase } from '../../shared/infra/supabase/client';
 
-export async function logProgreso(planId: string, valor: number, notas?: string, mediaUrl?: string) {
-  const { data, error } = await supabase
+export async function registrarProgreso(planId: string, notas?: string, valor?: number, media_url?: string) {
+  const { error } = await supabase
     .from('progreso')
-    .insert({ plan_id: planId, valor, notas, media_url: mediaUrl })
-    .select()
-    .single();
+    .insert({ plan_id: planId, notas, valor, media_url });
   if (error) throw error;
-  return data;
 }
 
-export async function listProgreso(planId: string) {
+export async function listarProgreso(planId: string) {
   const { data, error } = await supabase
     .from('progreso')
     .select('*')

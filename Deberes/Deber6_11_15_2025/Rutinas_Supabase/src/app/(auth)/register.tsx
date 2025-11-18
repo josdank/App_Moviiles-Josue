@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { View, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signUp } from '../../src/data/repositories/AuthRepo';
-import { useSession } from '../../src/presentation/stores/session';
-import { Input } from '../../src/presentation/components/Input';
-import { Button } from '../../src/presentation/components/Button';
-import { theme } from '../../src/shared/styles/theme';
+import { signUp } from '../../data/repositories/AuthRepo';
+import { useSession } from '../../presentation/stores/session';
+import { Input } from '../../presentation/components/Input';
+import { Button } from '../../presentation/components/Button';
+import { theme } from '../../shared/styles/theme';
 
 export default function Register() {
   const [name, setName] = useState('');
