@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 void main() {
   stdout.write('ingrese el 1er número: ');
   String input1 = stdin.readLineSync()!;
@@ -20,5 +20,5 @@ void main() {
  /*+2 +3 +4 +5 */
 
 
-}
+}*/
 

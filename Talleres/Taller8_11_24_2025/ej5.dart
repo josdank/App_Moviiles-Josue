@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 
 void main() {
   stdout.write('Ingrese un número: ');
@@ -14,3 +14,4 @@ void main() {
   }
 
 }
+*/
