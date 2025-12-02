@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold( // Scaffold
       appBar: AppBar( // AppBar
-        title: const Text('Fast Food'),
+        title: const Text('Comidad Rápida'),
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),

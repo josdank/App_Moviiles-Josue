@@ -25,7 +25,7 @@ class FastFoodApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fast Food',
+      title: 'Comidad Rápida',
       theme: buildTheme(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
