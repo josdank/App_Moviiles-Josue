@@ -46,6 +46,13 @@ class AuthPasswordUpdateRequested extends AuthEvent {
   List<Object?> get props => [currentPassword, newPassword];
 }
 
+class AuthPasswordResetConfirmRequested extends AuthEvent {
+  final String newPassword;
+  const AuthPasswordResetConfirmRequested({required this.newPassword});
+  @override
+  List<Object?> get props => [newPassword];
+}
+
 class AuthErrorCleared extends AuthEvent {
   const AuthErrorCleared();
 }
