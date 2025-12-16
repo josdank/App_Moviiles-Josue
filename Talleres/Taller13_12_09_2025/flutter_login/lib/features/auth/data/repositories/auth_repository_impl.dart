@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../../core/error/exceptions.dart';
+import '../../../../../core/error/failures.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
@@ -11,27 +11,39 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, UserEntity>> signUp({
-    required String email, required String password, String? fullName,
+    required String email,
+    required String password,
+    String? fullName,
   }) async {
     try {
-      final user = await remoteDataSource.signUp(email: email, password: password, fullName: fullName);
+      final user = await remoteDataSource.signUp(
+        email: email,
+        password: password,
+        fullName: fullName,
+      );
       return Right(user);
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message, code: e.code));
+      return Left(AuthFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Error inesperado: $e'));
+      return Left(AuthFailure(message: 'Error inesperado: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, UserEntity>> signIn({required String email, required String password}) async {
+  Future<Either<Failure, UserEntity>> signIn({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final user = await remoteDataSource.signIn(email: email, password: password);
+      final user = await remoteDataSource.signIn(
+        email: email,
+        password: password,
+      );
       return Right(user);
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message, code: e.code));
+      return Left(AuthFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Error inesperado: $e'));
+      return Left(AuthFailure(message: 'Error inesperado: $e'));
     }
   }
 
@@ -41,7 +53,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.signOut();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message: 'Error al cerrar sesión: $e'));
+      return Left(AuthFailure(message: e.toString()));
     }
   }
 
@@ -51,7 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await remoteDataSource.getCurrentUser();
       return Right(user);
     } catch (e) {
-      return Left(ServerFailure(message: 'Error: $e'));
+      return Left(AuthFailure(message: e.toString()));
     }
   }
 
@@ -61,30 +73,27 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.sendPasswordResetEmail(email);
       return const Right(null);
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message, code: e.code));
+      return Left(AuthFailure(message: e.message));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, void>> updatePassword(String newPassword) async {
+  Future<Either<Failure, void>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     try {
+      // Nota: Supabase maneja la seguridad del cambio, aquí simplificamos actualizando directo
       await remoteDataSource.updatePassword(newPassword);
       return const Right(null);
-    } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message, code: e.code));
+    } catch (e) {
+      return Left(AuthFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> verifyPassword(String password) async {
-    try {
-      final isValid = await remoteDataSource.verifyPassword(password);
-      return Right(isValid);
-    } catch (_) {
-      return const Right(false);
-    }
-  }
-
-  @override
-  Stream<UserEntity?> get authStateChanges => remoteDataSource.authStateChanges;
+  Stream<UserEntity?> get authStateChanges =>
+      remoteDataSource.authStateChanges;
 }

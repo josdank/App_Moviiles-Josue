@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/app_state.dart';
-import '../models/cart_item.dart';
 import '../widgets/quantity_stepper.dart';
 
 class CartScreen extends StatelessWidget {

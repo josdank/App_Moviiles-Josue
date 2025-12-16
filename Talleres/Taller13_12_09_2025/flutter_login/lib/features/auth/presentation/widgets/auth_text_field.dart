@@ -3,26 +3,22 @@ import 'package:flutter/material.dart';
 class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
-  final String? hint;
   final IconData prefixIcon;
   final bool isPassword;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final bool enabled;
-  final TextInputAction textInputAction;
   final void Function(String)? onFieldSubmitted;
 
   const AuthTextField({
     super.key,
     required this.controller,
     required this.label,
-    this.hint,
     required this.prefixIcon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.validator,
     this.enabled = true,
-    this.textInputAction = TextInputAction.next,
     this.onFieldSubmitted,
   });
 
@@ -41,16 +37,18 @@ class _AuthTextFieldState extends State<AuthTextField> {
       keyboardType: widget.keyboardType,
       validator: widget.validator,
       enabled: widget.enabled,
-      textInputAction: widget.textInputAction,
       onFieldSubmitted: widget.onFieldSubmitted,
       decoration: InputDecoration(
         labelText: widget.label,
-        hintText: widget.hint,
         prefixIcon: Icon(widget.prefixIcon),
         suffixIcon: widget.isPassword
             ? IconButton(
-                icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-                onPressed: () => setState(() => _obscureText = !_obscureText),
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() => _obscureText = !_obscureText);
+                },
               )
             : null,
       ),

@@ -1,7 +1,7 @@
-class ServerException implements Exception {
+class ServerExtencion implements Exception {
   final String message;
-  final int? statusCode;
-  const ServerException({required this.message, this.statusCode});
+  final int?  statusCode;
+  const ServerExtencion({required this.message, this.statusCode});
 }
 
 class AuthException implements Exception {

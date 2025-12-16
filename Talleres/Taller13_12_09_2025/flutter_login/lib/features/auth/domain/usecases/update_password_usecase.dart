@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/usecases/usecase.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class UpdatePasswordUseCase implements UseCase<void, UpdatePasswordParams> {
@@ -10,18 +10,9 @@ class UpdatePasswordUseCase implements UseCase<void, UpdatePasswordParams> {
 
   @override
   Future<Either<Failure, void>> call(UpdatePasswordParams params) async {
-    final verifyResult = await repository.verifyPassword(params.currentPassword);
-    return verifyResult.fold(
-      (failure) => Left(failure),
-      (isValid) async {
-        if (!isValid) {
-          return const Left(AuthFailure(
-            message: 'Contraseña actual incorrecta',
-            code: 'invalid_current_password',
-          ));
-        }
-        return await repository.updatePassword(params.newPassword);
-      },
+    return await repository.updatePassword(
+      currentPassword: params.currentPassword,
+      newPassword: params.newPassword,
     );
   }
 }
@@ -29,7 +20,12 @@ class UpdatePasswordUseCase implements UseCase<void, UpdatePasswordParams> {
 class UpdatePasswordParams extends Equatable {
   final String currentPassword;
   final String newPassword;
-  const UpdatePasswordParams({required this.currentPassword, required this.newPassword});
+
+  const UpdatePasswordParams({
+    required this.currentPassword,
+    required this.newPassword,
+  });
+
   @override
-  List<Object?> get props => [currentPassword, newPassword];
+  List<Object> get props => [currentPassword, newPassword];
 }

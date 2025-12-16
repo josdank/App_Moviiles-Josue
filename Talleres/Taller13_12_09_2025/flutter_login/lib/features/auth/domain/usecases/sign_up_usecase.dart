@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/usecases/usecase.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../../../core/usecases/usecase.dart';
 import '../entities/user_entity.dart';
 import '../repositories/auth_repository.dart';
 
@@ -23,7 +23,13 @@ class SignUpParams extends Equatable {
   final String email;
   final String password;
   final String? fullName;
-  const SignUpParams({required this.email, required this.password, this.fullName});
+
+  const SignUpParams({
+    required this.email,
+    required this.password,
+    this.fullName,
+  });
+
   @override
   List<Object?> get props => [email, password, fullName];
 }

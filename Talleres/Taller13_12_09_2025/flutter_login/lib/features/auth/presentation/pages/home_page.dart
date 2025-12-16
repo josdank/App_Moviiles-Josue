@@ -10,6 +10,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el usuario actual del estado si está disponible
+    final user = (context.read<AuthBloc>().state is AuthAuthenticated)
+        ? (context.read<AuthBloc>().state as AuthAuthenticated).user
+        : null;
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
@@ -23,44 +28,35 @@ class HomePage extends StatelessWidget {
           title: const Text('Home'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.exit_to_app),
               onPressed: () {
                 context.read<AuthBloc>().add(const AuthSignOutRequested());
               },
             ),
           ],
         ),
-        body: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is AuthAuthenticated) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Bienvenido',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      state.user.email,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    if (state.user.fullName != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        state.user.fullName!,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.verified_user, size: 80, color: Colors.green),
+              const SizedBox(height: 20),
+              Text(
+                '¡Bienvenido!',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                user?.email ?? 'Usuario',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (user?.fullName != null)
+                Text(
+                  user!.fullName!,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
+            ],
+          ),
         ),
       ),
     );

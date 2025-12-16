@@ -3,6 +3,7 @@ import '../../domain/entities/user_entity.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
+
   @override
   List<Object?> get props => [];
 }
@@ -31,10 +32,9 @@ class AuthUnauthenticated extends AuthState {
 
 class AuthError extends AuthState {
   final String message;
-  final String? code;
-  const AuthError({required this.message, this.code});
+  const AuthError({required this.message});
   @override
-  List<Object?> get props => [message, code];
+  List<Object?> get props => [message];
 }
 
 class AuthPasswordResetSent extends AuthState {
@@ -44,14 +44,15 @@ class AuthPasswordResetSent extends AuthState {
   List<Object?> get props => [email];
 }
 
-class AuthPasswordUpdated extends AuthState {
-  const AuthPasswordUpdated();
-}
-
 class AuthSignUpSuccess extends AuthState {
   final String email;
   final bool requiresEmailConfirmation;
-  const AuthSignUpSuccess({required this.email, this.requiresEmailConfirmation = true});
+
+  const AuthSignUpSuccess({
+    required this.email,
+    this.requiresEmailConfirmation = true,
+  });
+
   @override
   List<Object?> get props => [email, requiresEmailConfirmation];
 }
