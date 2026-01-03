@@ -76,8 +76,7 @@ class StepsCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Reto 1: notificación al superar 30 pasos.
-'
+                  'Reto 1: notificación al superar 30 pasos.'
                   'Reto 2: posible caída si magnitud > 25 m/s².',
                   style: TextStyle(color: Colors.black54),
                 )
