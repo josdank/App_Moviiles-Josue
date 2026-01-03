@@ -37,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       // ✅ Supabase manda email y abre tu Vercel /reset
       await AuthService().resetViaSupabase(
         mail,
-        redirectTo: 'https://TU-VERCEL.vercel.app/reset',
+        redirectTo: 'https://web-reset-password-0fot.onrender.com/reset-password',
       );
 
       if (!mounted) return;
